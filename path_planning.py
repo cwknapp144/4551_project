@@ -60,10 +60,10 @@ class path_planning(Node):
         # https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html
         timer_period = 0.5
         self.i = 0
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.timer = self.create_timer(timer_period, self.trivial_environment_v1)
         
     
-    def trivial_vacuuming(self):
+    def trivial_environment_v1(self):
 
         # If we are still vacuuming, we follow a similar line of logic as vacuum().
         # I am deliberately trying to turn it into a trivial environment here though.
