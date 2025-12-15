@@ -15,7 +15,6 @@ import numpy as np
 # if there are multiple sliding windows that are optimal, we choose arbitrarily. 
 # this adds a sense of randomness and might become completeness?!? total guess, but hopefully better
 
-# 
 
 class path_planning(Node):
     def __init__(self):
@@ -36,14 +35,16 @@ class path_planning(Node):
         )
 
         self.map_sub = self.create_subscription(
-            map, 
+            OccupancyGrid,
             'map',
             self.map_callback,
             10
         )
+       
+    
         self.compute_new_set = False
         self.angle_setpoint = 0.0
-
+        
         # Store odometry so ET can find home. Effecively, init will be goal during pathing.
         # I think init and final should suffice as inputs to a path planning algorithm.
         self.initx = None
@@ -56,15 +57,56 @@ class path_planning(Node):
         self.vacuuming = True
 
         # But when do we set self.vacuuming to false and use path planning?
+        # In dumb_vacuum_v2, 
         
-        self.laser_sub  # prevent unused variable warning
         self.odom_message = Odometry()
+
+        # The following way to track time heavily inspired by official jazzy documentation:
+        # https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html
+        timer_period = 0.5
+        self.i = 0
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        
+    
+    def trivial_vacuuming(self):
+
+        # If we are still vacuuming, we follow a similar line of logic as vacuum().
+        # I am deliberately trying to turn it into a trivial environment here though.
+        if self.vacuuming :
+            self.i += 1
+
+            # Some movement logic
+            move_message = TwistStamped()
+            
+            move_message.twist.linear.x = 1.0
+
+            # Stop after 100 timesteps.
+            if self.i >= 100 :
+                self.vacuuming = False
+
+
+
+        # Path back to origin after 100 timesteps.
+        else:
+            
+            # We will probably use SLD for any heuristic i.e. astar. We'll see.
+            sld = math.sqrt(((self.finalx - self.initx) ** 2) + ((self.finaly - self.inity) ** 2))
+
+            # TODO:
+            # result = dijkstras(self.initx, self.inity, self.finalx, self.finalx, map )
+            
+                
+            
+    
+    def map_callback(self, msg):
+        pass
+
     
     def odom_callback(self,msg): 
         self.odom_message = msg
 
         
-        if self.initx == None or self.inity = None :
+        if self.initx == None or self.inity == None :
             self.initx = self.odom_message.pose.pose.position.x
             self.inity = self.odom_message.pose.pose.position.y
          
@@ -74,10 +116,9 @@ class path_planning(Node):
 
     
 
-
 def main(args=None):
     rclpy.init(args=args)
-    test = dumb_vacuum_v2()
+    test = path_planning()
     rclpy.spin(test)
     test.destroy_node()
     rclpy.shutdown()
