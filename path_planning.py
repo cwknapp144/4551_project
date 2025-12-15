@@ -75,7 +75,7 @@ class path_planning(Node):
         if self.vacuuming :
             self.i += 1
 
-            # Some movement logic
+            # TODO: Finish trivial movement logic
             move_message = TwistStamped()
             
             move_message.twist.linear.x = 1.0
