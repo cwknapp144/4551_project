@@ -8,12 +8,7 @@ from nav_msgs.msg import OccupancyGrid
 import random
 import math
 import numpy as np
-# The purpose of this node is to build off of dumb_vacuum to be slightly less dumb
-# the proposed way of doing this, is to instead of looking straight forward, and viewing through a small
-# field of view that leads to the robot "sticking" to the edges, what if we used the whole lidar, found the max 
-# in a sliding window, say of 10 degrees, and then move in the center of that direction
-# if there are multiple sliding windows that are optimal, we choose arbitrarily. 
-# this adds a sense of randomness and might become completeness?!? total guess, but hopefully better
+
 
 
 class path_planning(Node):
